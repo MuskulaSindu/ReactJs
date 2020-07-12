@@ -18,9 +18,11 @@ class Header extends Component{
        })
    }
    ButtonClick(){
+    console.log(this.state.isModalOpen);
        this.setState({
            isModalOpen :!this.state.isModalOpen
        })
+       console.log(this.state.isModalOpen);
    }
    HandleForm=(event)=>{
         this.ButtonClick();

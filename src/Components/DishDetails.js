@@ -1,13 +1,19 @@
 import React from 'react';
-import { Card, CardImg, CardText, CardBody, CardTitle,BreadcrumbItem,Breadcrumb } from 'reactstrap';
+import { Input, Form, FormGroup,Card, CardImg, CardText,Modal,CardBody, CardTitle,BreadcrumbItem,Breadcrumb, Button, ModalHeader, ModalBody, Label, Row } from 'reactstrap';
 import {Link} from 'react-router-dom';
+import { LocalForm, Control ,Errors} from 'react-redux-form';
 
+const required = (val) => val && val.length;
+const maxLength = (len) => (val) => !(val) || (val.length <= len);
+const minLength = (len) => (val) => val && (val.length >= len);
 
 
 class DishDetails extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            isModalOpen: false
+        };
     }
     renderDish(dish) {
         if (dish !== '') {
@@ -37,6 +43,7 @@ class DishDetails extends React.Component {
         return(
          comments.map(item =>{
              return(
+                 <div>
                  <div key={item.id}>
                          <div>
                          <p>{item.comment}</p>
@@ -45,15 +52,82 @@ class DishDetails extends React.Component {
                              <p>-- {item.author}, {item.date}</p>
                          </div>
                          </div>
+                         </div>
              )
+             
          })
         )
     }
 
     }
+    HandleComment(addComment,dishId){
+        console.log(dishId);
+        return(
+            <Modal isOpen={this.state.isModalOpen} >
+            <ModalHeader >Submit Comment</ModalHeader>
+            <ModalBody>
+                <LocalForm onSubmit={(values)=>this.Handle(values,addComment,dishId)}>
+                <div className="form-group">
+                <Label htmlFor="rating" >Rating</Label>
+                <Control.select model=".rating" id="rating" name="rating"
+                 className="form-control">
+                     <option>1</option>
+                     <option>2</option>
+                     <option>3</option>
+                     <option>4</option>
+                     <option>5</option>
+                     </Control.select>
+                </div>
+                    <div className="form-group">
+                <Label htmlFor="username" >Your Name</Label>
+                <Control.text model=".username" id="username" name="username" placeholder="Your Name"
+                 className="form-control"
+                 validators={{
+                    required, minLength: minLength(3), maxLength: maxLength(15)
+                }}
+                 />
+            <Errors
+                className="text-danger"
+                model=".username"
+                show="touched"
+                messages={{
+                    required: 'Required',
+                    minLength: 'Must be greater than 2 characters',
+                    maxLength: 'Must be 15 characters or less'
+                }}
+             />
+                </div>
+                <div className="form-group">
+                <Label htmlFor="msg" >Comment</Label>
+                <Control.textarea model=".msg" rows="6" id="msg" name="msg"
+                 className="form-control"/>
+                </div>
+               
+               <div className="form-group">
+               <Button type="submit" color="primary">Submit</Button>
+                </div>
+            </LocalForm>
+            </ModalBody>
+        </Modal>
+        )
+    }
+    Handle(values,addComment,dishId){
+        console.log(dishId);
+        this.HandleSubmit();
+        console.log('Current State is: ' + JSON.stringify(values));
+        alert('Current State is: ' + JSON.stringify(values));
+        addComment(dishId, values.rating, values.username, values.msg);
+    }
+    HandleSubmit(){
+        this.setState({
+            isModalOpen:!this.state.isModalOpen
+        })
+    }
     render() {
         const dish  = this.props.dish;
         const comments=this.props.comments;
+        const addComment=this.props.addComment;
+        const dishId= this.props.dish.id;
         return (
         <div>
                  <div className="container">
@@ -78,6 +152,8 @@ class DishDetails extends React.Component {
                     <h4>Comments</h4>
                     </div>
                 {this.renderComments(comments)}
+        <Button onClick={() => this.HandleSubmit()}><i className="fa fa-pencil"></i>{"    "}Submit Comment</Button>
+         {this.HandleComment(addComment,dishId)}
                 </div>
             </div>
             
