@@ -1,6 +1,7 @@
 import React from 'react';
 import { CardTitle, CardImg, CardBody, CardSubtitle ,CardText,Card} from 'reactstrap';
 import { Loading } from './LoadingComponent';
+import { baseUrl } from '../shared/baseUrl';
 
 class Home extends React.Component{
     constructor(props){
@@ -21,7 +22,7 @@ class Home extends React.Component{
         return(
             <div className="container">
                 <Card>
-                    <CardImg src={item.image} alt={item} />
+                    <CardImg src={baseUrl + item.image} alt={item} />
                     <CardBody>
                     <CardTitle>{item.name}</CardTitle>
                     {item.designation ? <CardSubtitle>{item.designation}</CardSubtitle> : null}
@@ -44,7 +45,7 @@ class Home extends React.Component{
                       </div>
 
                       <div className="col-12 col-md-4">
-                          {this.RenderMethod(this.props.promotion)}
+                          {this.RenderMethod(this.props.promotion,this.props.promoLoading,this.props.promoErrMess)}
                       </div>
 
                       <div className="col-12 col-md-4">
